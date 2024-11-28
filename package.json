@@ -1,0 +1,29 @@
+{
+  "name": "best-call",
+  "private": false,
+  "version": "1.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/best-call.umd.cjs",
+  "module": "./dist/best-call.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/best-call.js",
+    "require": "./dist/best-call.umd.cjs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.3",
+    "vite": "^5.4.9",
+    "vite-plugin-dts": "^4.3.0"
+  },
+  "dependencies": {
+    "jssip": "^3.10.1"
+  }
+}
