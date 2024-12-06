@@ -1,6 +1,9 @@
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 export default defineConfig({
+  server:{
+    port: 3003
+  },
   plugins: [
     dts({
       outDir: "dist",

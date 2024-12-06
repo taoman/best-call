@@ -15,7 +15,7 @@
     "require": "./dist/best-call.umd.cjs"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc && vite build"
   },
   "devDependencies": {
@@ -24,6 +24,7 @@
     "vite-plugin-dts": "^4.3.0"
   },
   "dependencies": {
-    "jssip": "^3.10.1"
+    "jssip": "^3.10.1",
+    "uuid": "^11.0.3"
   }
 }

@@ -1,27 +1,40 @@
 import "./style.css";
-import typescriptLogo from "./typescript.svg";
-import { setupCounter } from "../lib/main";
+// import typescriptLogo from "./typescript.svg";
+// import { setupCounter } from "../lib/main";
+import { InitConfig } from "./sipCall/index.d";
+import SipCall from "./sipCall";
+// src/main.ts
+const { createApp, ref } = Vue;
 
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div>
-   <button id="checkIn" type="button">签入</button>
-   <button id="call" type="button">接听</button>
-   <button id="outbound" type="button">外呼</button>
-  </div>
-`;
+const App = {
+  template: `<div>
+               <button @click="changeMessage">签入</button>
+             </div>`,
+  setup() {
+    const message = ref("Hello, Vue 3!");
+    const stateEventListener = (event: String, data: any) => {
+      console.log("event:", event, data);
+    };
+    const configuration: InitConfig = {
+      host: "172.17.132.95",
+      port: 5080,
+      fsHost: "ws://172.17.132.95",
+      fsPort: 5066,
+      extNo: "1001",
+      extPwd: "1234",
+      stun: { type: "stun" },
+      checkMic: true,
+      stateEventListener,
+    };
 
-document
-  .querySelector<HTMLButtonElement>("#checkIn")
-  ?.addEventListener("click", () => {
-    console.log("111111");
-  });
-document
-  .querySelector<HTMLButtonElement>("#call")
-  ?.addEventListener("click", () => {
-    console.log("2222");
-  });
-document
-  .querySelector<HTMLButtonElement>("#outbound")
-  ?.addEventListener("click", () => {
-    console.log("3333");
-  });
+    const changeMessage = () => {
+      // message.value = "你点击了按钮!";
+      const sipClient = new SipCall(configuration);
+      console.log("sipClient:", sipClient);
+    };
+
+    return { message, changeMessage, stateEventListener };
+  },
+};
+
+createApp(App).mount("#app");
