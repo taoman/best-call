@@ -8,12 +8,12 @@ export default defineConfig({
     dts({
       outDir: "dist",
       insertTypesEntry: true, // 生成类型文件的入口
-      entryRoot: "src/sipCall",
+      entryRoot: "src/best-call",
     }),
   ],
   build: {
     lib: {
-      entry: "./src/sipCall/index.ts",
+      entry: "./src/best-call/index.ts",
       name: "best-call",
       fileName: "best-call",
     },

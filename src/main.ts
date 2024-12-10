@@ -1,39 +1,46 @@
 import "./style.css";
 // import typescriptLogo from "./typescript.svg";
 // import { setupCounter } from "../lib/main";
-import { InitConfig } from "./sipCall/index.d";
-import SipCall from "./sipCall";
+import { InitConfig } from "./best-call/index.d";
+import BestCall from "./best-call";
 // src/main.ts
-const { createApp, ref } = Vue;
+const { createApp, ref, markRaw } = Vue;
 
 const App = {
   template: `<div>
-               <button @click="changeMessage">签入</button>
+               <button @click="login">签入</button>
              </div>`,
   setup() {
-    const message = ref("Hello, Vue 3!");
+    const sipClient = ref();
     const stateEventListener = (event: String, data: any) => {
       console.log("event:", event, data);
+      switch (event) {
+        case "CONNECTED":
+          console.log("连接成功");
+          // sipClient.value.register()
+          break;
+        case "REGISTERED":
+          console.log("注册成功");
+      }
     };
     const configuration: InitConfig = {
       host: "172.17.132.95",
-      port: 5080,
+      port: 5060,
       fsHost: "ws://172.17.132.95",
       fsPort: 5066,
       extNo: "1001",
-      extPwd: "1234",
-      stun: { type: "stun" },
+      extPwd: "1001",
+      stun: { type: "stun", host: "stun.l.google.com:19302" },
       checkMic: true,
       stateEventListener,
     };
 
-    const changeMessage = () => {
-      // message.value = "你点击了按钮!";
-      const sipClient = new SipCall(configuration);
-      console.log("sipClient:", sipClient);
+    const login = () => {
+      sipClient.value = markRaw(new BestCall(configuration));
+      console.log("login", sipClient.value);
     };
 
-    return { message, changeMessage, stateEventListener };
+    return { login, stateEventListener };
   },
 };
 

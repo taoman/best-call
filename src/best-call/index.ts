@@ -28,9 +28,8 @@ import {
   State,
   CallExtraParam,
 } from "./index.d";
-// 状态枚举
 
-export default class SipCall {
+export default class BestCall {
   //媒体控制
   private constraints = {
     audio: true,
@@ -83,21 +82,19 @@ export default class SipCall {
       uri: `sip:${config.extNo}@${config.host}:${config.port}`,
       // uri: uri.toString(),
       password: config.extPwd,
-      register: false,
       register_expires: 15,
       session_timers: false,
       user_agent: "JsSIP 3.10.1",
+      // contact_uri: "",
     };
     this.ua = new jssip.UA(configuration);
 
     // websocket连接成功
-    this.ua.on("connected", (e) => {
-      console.log("connected", e);
+    this.ua.on("connected", () => {
       this.onChangeState(State.CONNECTED, null);
     });
     // websocket连接失败
     this.ua.on("disconnected", (e) => {
-      console.log("disconnected");
       this.ua.stop();
       if (e.error) {
         this.onChangeState(State.ERROR, e.reason);
@@ -105,18 +102,15 @@ export default class SipCall {
     });
     // 注册成功
     this.ua.on("registered", (_e) => {
-      console.log("registered");
       this.onChangeState(State.REGISTERED, { localAgent: this.localAgent });
     });
     // 取消注册
     this.ua.on("unregistered", (_e) => {
-      console.log("unregistered");
       this.ua.stop();
       this.onChangeState(State.UNREGISTERED, { localAgent: this.localAgent });
     });
     // 注册失败
     this.ua.on("registrationFailed", (e) => {
-      console.log("registrationFailed");
       this.onChangeState(State.REGISTER_FAILED, { msg: "注册失败" + e.cause });
     });
     // 注册到期前几秒触发
@@ -167,8 +161,7 @@ export default class SipCall {
           iceCandidateTimeout = setTimeout(evt.ready, 1000);
         });
         // 来电振铃
-        session.on("progress", (evt: IncomingEvent | OutgoingEvent) => {
-          console.info("来电振铃", evt);
+        session.on("progress", (_evt: IncomingEvent | OutgoingEvent) => {
           this.onChangeState(currentEvent, {
             direction: this.direction,
             otherLegNumber: data.request.from.uri.user,
@@ -259,45 +252,6 @@ export default class SipCall {
       return;
     }
     this.stateEventListener(event, data);
-  }
-  // 检测麦克风
-  public micCheck() {
-    navigator.permissions
-      .query({ name: "microphone" as PermissionName })
-      .then((result) => {
-        if (result.state == "denied") {
-          // 拒绝
-          this.onChangeState(State.MIC_ERROR, {
-            msg: "麦克风权限被禁用,请设置允许使用麦克风",
-          });
-          return;
-        } else if (result.state == "prompt") {
-          // 询问
-          this.onChangeState(State.MIC_ERROR, {
-            msg: "麦克风权限未开启,请设置允许使用麦克风权限后重试",
-          });
-        }
-        //经过了上面的检测，这一步应该不需要了
-        if (navigator.mediaDevices == undefined) {
-          this.onChangeState(State.MIC_ERROR, {
-            msg: "麦克风检测异常,请检查麦克风权限是否开启,是否在HTTPS站点",
-          });
-          return;
-        }
-        navigator.mediaDevices
-          .getUserMedia(this.constraints)
-          .then((_) => {
-            _.getTracks().forEach((track) => {
-              track.stop();
-            });
-          })
-          .catch(() => {
-            // 拒绝
-            this.onChangeState(State.MIC_ERROR, {
-              msg: "麦克风检测异常,请检查麦克风",
-            });
-          });
-      });
   }
 
   // 处理媒体流
@@ -582,5 +536,44 @@ export default class SipCall {
         extraHeaders: [],
       });
     }
+  }
+  // 检测麦克风
+  public micCheck() {
+    navigator.permissions
+      .query({ name: "microphone" as PermissionName })
+      .then((result) => {
+        if (result.state == "denied") {
+          // 拒绝
+          this.onChangeState(State.MIC_ERROR, {
+            msg: "麦克风权限被禁用,请设置允许使用麦克风",
+          });
+          return;
+        } else if (result.state == "prompt") {
+          // 询问
+          this.onChangeState(State.MIC_ERROR, {
+            msg: "麦克风权限未开启,请设置允许使用麦克风权限后重试",
+          });
+        }
+        //经过了上面的检测，这一步应该不需要了
+        if (navigator.mediaDevices == undefined) {
+          this.onChangeState(State.MIC_ERROR, {
+            msg: "麦克风检测异常,请检查麦克风权限是否开启,是否在HTTPS站点",
+          });
+          return;
+        }
+        navigator.mediaDevices
+          .getUserMedia(this.constraints)
+          .then((_) => {
+            _.getTracks().forEach((track) => {
+              track.stop();
+            });
+          })
+          .catch(() => {
+            // 拒绝
+            this.onChangeState(State.MIC_ERROR, {
+              msg: "麦克风检测异常,请检查麦克风",
+            });
+          });
+      });
   }
 }

@@ -1,3 +1,7 @@
+import * as jssip from "jssip";
+import {
+  RTCSession,
+} from "jssip/lib/RTCSession";
 // 状态枚举
 export enum State {
   MIC_ERROR = "MIC_ERROR", //麦克风检测异常
@@ -15,7 +19,6 @@ export enum State {
   MUTE = "MUTE", //静音
   UNMUTE = "UNMUTE", //取消静音
   LATENCY_STAT = "LATENCY_STAT", //网络延迟统计
-
   MESSAGE_INCOMING = "MESSAGE_INCOMING", //消息接收
 }
 // 通话方向枚举
@@ -42,7 +45,7 @@ type StunType = "turn" | "stun";
 export type CallDirection = "outbound" | "inbound";
 export interface StunConfig {
   type: StunType;
-  host?: string;
+  host: string;
   username?: string;
   password?: string;
 }
@@ -91,4 +94,76 @@ export interface LatencyStat {
 interface CallExtraParam {
   outNumber?: string;
   businessId?: String;
+}
+
+export default class BestCall {
+  private constraints: { audio: boolean; video: boolean };
+  private audioView: HTMLAudioElement;
+  private ua: jssip.UA;
+  private socket: jssip.WebSocketInterface;
+
+  private localAgent: string;
+  private otherLegNumber: string | undefined;
+
+  private outgoingSession: RTCSession | undefined;
+  private incomingSession: RTCSession | undefined;
+  private currentSession: RTCSession | undefined;
+
+  private direction: CallDirection | undefined;
+  private currentCallId: string | undefined;
+
+  private currentLatencyStatTimer: number | undefined;
+  private currentStatReport: NetworkLatencyStat;
+
+  private stunConfig: StunConfig | undefined;
+  private stateEventListener: Function | undefined;
+
+  constructor(config: InitConfig);
+
+  private cleanCallingData(): void;
+
+  private onChangeState(
+    event: string,
+    data:
+      | StateListenerMessage
+      | CallEndEvent
+      | LatencyStat
+      | string
+      | null
+      | undefined
+  ): void;
+
+  private handleAudio(pc: RTCPeerConnection): void;
+
+  private checkCurrentCallIsActive(): boolean;
+
+  public register(): void;
+
+  public unregister(): void;
+
+  public cleanSdk(): void;
+
+  public sendMessage(target: string, content: string): void;
+
+  public getCallOptionPcConfig(): RTCConfiguration | undefined;
+
+  public call(phone: string, param?: CallExtraParam): string;
+
+  public answer(): void;
+
+  public hangup(): void;
+
+  public hold(): void;
+
+  public unhold(): void;
+
+  public mute(): void;
+
+  public unmute(): void;
+
+  public transfer(phone: string): void;
+
+  public sendDtmf(tone: string): void;
+
+  public micCheck(): void;
 }
