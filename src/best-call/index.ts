@@ -39,7 +39,8 @@ export default class BestCall {
   private audioView = document.createElement("audio");
   private ua: jssip.UA;
   private socket: jssip.WebSocketInterface;
-
+  // 是否监测麦克风权限
+  private checkMic: boolean;
   //当前坐席号码
   private localAgent: String;
   //对方号码
@@ -67,6 +68,7 @@ export default class BestCall {
   constructor(config: InitConfig) {
     this.localAgent = config.extNo;
     this.stunConfig = config.stun;
+    this.checkMic = config.checkMic;
     if (config.stateEventListener !== null) {
       this.stateEventListener = config.stateEventListener;
     }
@@ -165,7 +167,8 @@ export default class BestCall {
           this.onChangeState(currentEvent, {
             direction: this.direction,
             otherLegNumber: data.request.from.uri.user,
-            callId: this.currentCallId,
+            // @ts-ignore
+            callId: data.request.call_id || this.currentCallId,
           });
         });
         // 来电接通
@@ -432,7 +435,7 @@ export default class BestCall {
   }
   // 呼叫事件
   public call(phone: string, param: CallExtraParam = {}) {
-    this.micCheck();
+    this.checkMic && this.micCheck();
     this.currentCallId = uuidv4();
     if (this.ua && this.ua.isRegistered()) {
       const extraHeaders: string[] = ["X-JCallId: " + this.currentCallId];
@@ -539,41 +542,62 @@ export default class BestCall {
   }
   // 检测麦克风
   public micCheck() {
-    navigator.permissions
-      .query({ name: "microphone" as PermissionName })
-      .then((result) => {
-        if (result.state == "denied") {
-          // 拒绝
-          this.onChangeState(State.MIC_ERROR, {
-            msg: "麦克风权限被禁用,请设置允许使用麦克风",
-          });
-          return;
-        } else if (result.state == "prompt") {
-          // 询问
-          this.onChangeState(State.MIC_ERROR, {
-            msg: "麦克风权限未开启,请设置允许使用麦克风权限后重试",
-          });
-        }
-        //经过了上面的检测，这一步应该不需要了
-        if (navigator.mediaDevices == undefined) {
-          this.onChangeState(State.MIC_ERROR, {
-            msg: "麦克风检测异常,请检查麦克风权限是否开启,是否在HTTPS站点",
-          });
-          return;
-        }
-        navigator.mediaDevices
-          .getUserMedia(this.constraints)
-          .then((_) => {
-            _.getTracks().forEach((track) => {
-              track.stop();
-            });
-          })
-          .catch(() => {
-            // 拒绝
-            this.onChangeState(State.MIC_ERROR, {
-              msg: "麦克风检测异常,请检查麦克风",
-            });
-          });
+    if (!navigator.mediaDevices) {
+      this.onChangeState(State.MIC_ERROR, {
+        msg: "麦克风检测异常,请检查麦克风权限是否开启,是否在HTTPS站点",
       });
+      return;
+    }
+    navigator.mediaDevices
+      .getUserMedia(this.constraints)
+      .then((_) => {
+        console.log("麦克风获取成功");
+        _.getTracks().forEach((track) => {
+          track.stop();
+        });
+      })
+      .catch(() => {
+        // 拒绝
+        this.onChangeState(State.MIC_ERROR, {
+          msg: "麦克风检测异常,请检查麦克风",
+        });
+      });
+
+    // navigator.permissions
+    //   .query({ name: "microphone" as PermissionName })
+    //   .then((result) => {
+    //     if (result.state == "denied") {
+    //       // 拒绝
+    //       this.onChangeState(State.MIC_ERROR, {
+    //         msg: "麦克风权限被禁用,请设置允许使用麦克风",
+    //       });
+    //       return;
+    //     } else if (result.state == "prompt") {
+    //       // 询问
+    //       this.onChangeState(State.MIC_ERROR, {
+    //         msg: "麦克风权限未开启,请设置允许使用麦克风权限后重试",
+    //       });
+    //     }
+    //     //经过了上面的检测，这一步应该不需要了
+    //     if (navigator.mediaDevices == undefined) {
+    //       this.onChangeState(State.MIC_ERROR, {
+    //         msg: "麦克风检测异常,请检查麦克风权限是否开启,是否在HTTPS站点",
+    //       });
+    //       return;
+    //     }
+    //     navigator.mediaDevices
+    //       .getUserMedia(this.constraints)
+    //       .then((_) => {
+    //         _.getTracks().forEach((track) => {
+    //           track.stop();
+    //         });
+    //       })
+    //       .catch(() => {
+    //         // 拒绝
+    //         this.onChangeState(State.MIC_ERROR, {
+    //           msg: "麦克风检测异常,请检查麦克风",
+    //         });
+    //       });
+    //   });
   }
 }
