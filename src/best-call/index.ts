@@ -99,7 +99,9 @@ export default class BestCall {
     this.ua.on("disconnected", (e) => {
       this.ua.stop();
       if (e.error) {
-        this.onChangeState(State.ERROR, e.reason);
+        this.onChangeState(State.ERROR, {
+          msg: "websocket连接失败,请检查地址或网络",
+        });
       }
     });
     // 注册成功
