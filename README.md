@@ -128,6 +128,10 @@ stateEventListener 回调参数为 event, data
 | IN_CALL                     | 无返回值                                                                                                                                                           | 通话中             |
 | HOLD                        | 无返回值                                                                                                                                                           | 保持中             |
 | CALL_END                    | CallEndEvent                                                                                                                                                       | 通话结束           |
+| MUTE                        | 无返回值                                                                                                                                                           | 静音               |
+| UNMUTE                      | 无返回值                                                                                                                                                           | 取消静音           |
+| LATENCY_STAT                | LatencyStat                                                                                                                                                        | 网络延迟统计       |
+| MESSAGE_INCOMING            | newMessage                                                                                                                                                         | 消息接收           |
 
 ### CallEndEvent
 
