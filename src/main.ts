@@ -22,7 +22,13 @@ const App = {
     <button type="primary" @click="unMute">
       取消静音
     </button>
-    <button type="primary" @click="hangup" v-if="isAnswer">挂断</button>
+    <button type="primary" @click="hold">
+      保持
+    </button>
+    <button type="primary" @click="unHold">
+      取消保持
+    </button>
+    <button type="primary" @click="hangup">挂断</button>
     </div>
     `,
   setup() {
@@ -109,7 +115,7 @@ const App = {
       init();
     };
     const call = () => {
-      sipClient.value?.call("1010");
+      sipClient.value?.call("1018");
     };
     const out = () => {
       sipClient.value?.unregister();
@@ -127,6 +133,12 @@ const App = {
     const unMute = () => {
       sipClient.value?.unmute()
     }
+    const hold = () => {
+      sipClient.value?.hold();
+    }
+    const unHold = () => {
+      sipClient.value?.unhold();
+    }
     return {
       enter,
       call,
@@ -135,6 +147,8 @@ const App = {
       hangup,
       mute,
       unMute,
+      hold,
+      unHold,
       stateEventListener,
       isAnswer,
       inCall,

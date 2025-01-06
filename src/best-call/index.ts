@@ -1,5 +1,5 @@
 import * as jssip from "jssip";
-// import { URI } from "jssip";
+import { URI } from "jssip";
 import { v4 as uuidv4 } from "uuid";
 import {
   EndEvent,
@@ -78,17 +78,18 @@ export default class BestCall {
     this.socket = new jssip.WebSocketInterface(
       `${config.fsHost}:${config.fsPort}`
     );
-    // const uri = new URI("sip", config.extNo, config.host, config.port);
+    const uri = new URI("sip", config.extNo, config.host, config.port);
     const configuration = {
       sockets: [this.socket],
-      uri: `sip:${config.extNo}@${config.host}:${config.port}`,
-      // uri: uri.toString(),
+      // uri: `sip:${config.extNo}@${config.host}:${config.port}`,
+      uri: uri.toString(),
       password: config.extPwd,
       register_expires: 15,
       session_timers: false,
       user_agent: "JsSIP 3.10.1",
-      // contact_uri: "",
+      contact_uri: "",
     };
+    configuration.contact_uri = uri.toString();
     this.ua = new jssip.UA(configuration);
 
     // websocket连接成功
@@ -126,6 +127,8 @@ export default class BestCall {
     this.ua.on(
       "newRTCSession",
       (data: IncomingRTCSessionEvent | OutgoingRTCSessionEvent) => {
+        console.log("newRTCSession", data);
+
         const session = data.session;
         let currentEvent: String;
 
@@ -170,7 +173,8 @@ export default class BestCall {
             direction: this.direction,
             otherLegNumber: data.request.from.uri.user,
             // @ts-ignore
-            callId: data.request.call_id || this.currentCallId,
+            // callId: data.request.call_id,
+            callId: data.session.id,
           });
         });
         // 来电接通
