@@ -100,8 +100,8 @@ const App = {
           port: 5060,
           fsHost: "wss://172.17.132.95",
           fsPort: 7443,
-          extNo: "1019",
-          extPwd: "1019",
+          extNo: "1010",
+          extPwd: "1010",
           stun: { type: StunType.STUN, host: "stun.l.google.com:19302" },
           checkMic: true,
           stateEventListener,
@@ -115,7 +115,7 @@ const App = {
       init();
     };
     const call = () => {
-      sipClient.value?.call("1018");
+      sipClient.value?.call("1008");
     };
     const out = () => {
       sipClient.value?.unregister();

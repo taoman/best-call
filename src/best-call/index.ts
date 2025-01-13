@@ -89,6 +89,7 @@ export default class BestCall {
       user_agent: "JsSIP 3.10.1",
       contact_uri: "",
     };
+    uri.setParam("transport", "ws");
     configuration.contact_uri = uri.toString();
     this.ua = new jssip.UA(configuration);
 
@@ -106,7 +107,8 @@ export default class BestCall {
       }
     });
     // 注册成功
-    this.ua.on("registered", (_e) => {
+    this.ua.on("registered", (_data) => {
+      console.log("注册成功---",_data);
       this.onChangeState(State.REGISTERED, { localAgent: this.localAgent });
     });
     // 取消注册
