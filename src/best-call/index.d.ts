@@ -32,7 +32,7 @@ export interface InitConfig {
   host: string; // sip地址
   port: number; // sip端口
   fsHost: string; // freeswitch地址
-  fsPort: number; // freeswitch端口
+  fsPort: string | number; // freeswitch端口
   extNo: string; //分机号
   extPwd: string; // 分机密码
   stun?: StunConfig; // stun服务器配置

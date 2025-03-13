@@ -93,13 +93,21 @@ const App = {
       TURN = "turn",
     }
     const init = () => {
+      // const socket = new WebSocket("wss://openchat.bestpay.cn:21117/fs-socket");
+      // socket.onopen = () => {
+      //   console.log("websocket连接成功");
+      // };
+      // socket.onclose = () => {
+      //   console.log("websocket连接关闭");
+      // };
+
       console.log("初始化");
       try {
         const configuration: InitConfig = {
           host: "172.17.132.95",
           port: 5060,
           fsHost: "wss://172.17.132.95",
-          fsPort: 7443,
+          fsPort: "7443",
           extNo: "1010",
           extPwd: "1010",
           stun: { type: StunType.STUN, host: "stun.l.google.com:19302" },
@@ -115,7 +123,7 @@ const App = {
       init();
     };
     const call = () => {
-      sipClient.value?.call("1008");
+      sipClient.value?.call("3902");
     };
     const out = () => {
       sipClient.value?.unregister();
