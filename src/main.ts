@@ -104,12 +104,12 @@ const App = {
       console.log("初始化");
       try {
         const configuration: InitConfig = {
-          host: "172.17.132.95",
+          host: "172.17.36.23",
           port: 5060,
-          fsHost: "wss://172.17.132.95",
-          fsPort: "7443",
-          extNo: "1010",
-          extPwd: "1010",
+          fsHost: "ws://172.17.36.23",
+          fsPort: "5066",
+          extNo: "1005",
+          extPwd: "1234",
           stun: { type: StunType.STUN, host: "stun.l.google.com:19302" },
           checkMic: true,
           stateEventListener,

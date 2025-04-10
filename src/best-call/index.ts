@@ -570,42 +570,5 @@ export default class BestCall {
           msg: "麦克风检测异常,请检查麦克风",
         });
       });
-
-    // navigator.permissions
-    //   .query({ name: "microphone" as PermissionName })
-    //   .then((result) => {
-    //     if (result.state == "denied") {
-    //       // 拒绝
-    //       this.onChangeState(State.MIC_ERROR, {
-    //         msg: "麦克风权限被禁用,请设置允许使用麦克风",
-    //       });
-    //       return;
-    //     } else if (result.state == "prompt") {
-    //       // 询问
-    //       this.onChangeState(State.MIC_ERROR, {
-    //         msg: "麦克风权限未开启,请设置允许使用麦克风权限后重试",
-    //       });
-    //     }
-    //     //经过了上面的检测，这一步应该不需要了
-    //     if (navigator.mediaDevices == undefined) {
-    //       this.onChangeState(State.MIC_ERROR, {
-    //         msg: "麦克风检测异常,请检查麦克风权限是否开启,是否在HTTPS站点",
-    //       });
-    //       return;
-    //     }
-    //     navigator.mediaDevices
-    //       .getUserMedia(this.constraints)
-    //       .then((_) => {
-    //         _.getTracks().forEach((track) => {
-    //           track.stop();
-    //         });
-    //       })
-    //       .catch(() => {
-    //         // 拒绝
-    //         this.onChangeState(State.MIC_ERROR, {
-    //           msg: "麦克风检测异常,请检查麦克风",
-    //         });
-    //       });
-    //   });
   }
 }
