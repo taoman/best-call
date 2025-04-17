@@ -32,7 +32,8 @@ export interface InitConfig {
   host: string; // sip地址
   port: number; // sip端口
   fsHost: string; // freeswitch地址
-  fsPort: string | number; // freeswitch端口
+  fsPort?: string | number; // freeswitch端口
+  viaTransport?: string; // 表示在传出请求的 Via 标头字段中使用的 Via 传输的字符串
   extNo: string; //分机号
   extPwd: string; // 分机密码
   stun?: StunConfig; // stun服务器配置

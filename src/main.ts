@@ -35,6 +35,27 @@ const App = {
     const sipClient = ref();
     const isAnswer = ref(false);
     const inCall = ref(false);
+    const setupListeners = () => {
+      const handleOnline = () => {
+        console.log("网络已连接");
+        // 可以在这里执行重新初始化或其他操作
+      };
+
+      const handleOffline = () => {
+        console.log("网络已断开");
+        // 可以在这里执行清理操作或提示用户
+      };
+      const handleBeforeUnload = (_event: BeforeUnloadEvent) => {
+        // 处理页面关闭或刷新事件
+        console.log("页面即将关闭或刷新");
+        // 可以在这里执行清理操作
+        // event.returnValue = "确定要离开吗？"; // 提示用户确认离开
+      };
+      window.addEventListener("online", handleOnline);
+      window.addEventListener("offline", handleOffline);
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    };
+    setupListeners();
     const stateEventListener = (event: string, data: any) => {
       switch (event) {
         case "CONNECTED":
@@ -104,12 +125,14 @@ const App = {
       console.log("初始化");
       try {
         const configuration: InitConfig = {
-          host: "172.17.36.23",
+          host: "172.17.36.25",
           port: 5060,
-          fsHost: "ws://172.17.36.23",
-          fsPort: "5066",
+          fsHost: "wss://crm-callcenter.test.bestpay.net/fws",
+          viaTransport:'ws',
+          // fsHost: "ws://172.17.36.25",
+          // fsPort: "5066",
           extNo: "1005",
-          extPwd: "1234",
+          extPwd: "1005",
           stun: { type: StunType.STUN, host: "stun.l.google.com:19302" },
           checkMic: true,
           stateEventListener,
@@ -123,7 +146,7 @@ const App = {
       init();
     };
     const call = () => {
-      sipClient.value?.call("3902");
+      sipClient.value?.call("1006");
     };
     const out = () => {
       sipClient.value?.unregister();
@@ -137,16 +160,16 @@ const App = {
     };
     const mute = () => {
       sipClient.value?.mute();
-    }
+    };
     const unMute = () => {
-      sipClient.value?.unmute()
-    }
+      sipClient.value?.unmute();
+    };
     const hold = () => {
       sipClient.value?.hold();
-    }
+    };
     const unHold = () => {
       sipClient.value?.unhold();
-    }
+    };
     return {
       enter,
       call,

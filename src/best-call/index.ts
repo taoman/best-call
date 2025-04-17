@@ -75,9 +75,12 @@ export default class BestCall {
     if (config.checkMic) {
       this.micCheck();
     }
-    this.socket = new jssip.WebSocketInterface(
-      `${config.fsHost}:${config.fsPort}`
-    );
+    const fsUrl = config.fsPort
+      ? `${config.fsHost}:${config.fsPort}`
+      : config.fsHost;
+
+    this.socket = new jssip.WebSocketInterface(fsUrl);
+    if (config.viaTransport) this.socket.via_transport = config.viaTransport;
     const uri = new URI("sip", config.extNo, config.host, config.port);
     const configuration = {
       sockets: [this.socket],
@@ -94,7 +97,7 @@ export default class BestCall {
     this.ua = new jssip.UA(configuration);
 
     // websocket连接成功
-    this.ua.on("connected", () => {
+    this.ua.on("connected", (_e) => {
       this.onChangeState(State.CONNECTED, null);
     });
     // websocket连接失败
@@ -108,7 +111,6 @@ export default class BestCall {
     });
     // 注册成功
     this.ua.on("registered", (_data) => {
-      console.log("注册成功---",_data);
       this.onChangeState(State.REGISTERED, { localAgent: this.localAgent });
     });
     // 取消注册
@@ -129,8 +131,6 @@ export default class BestCall {
     this.ua.on(
       "newRTCSession",
       (data: IncomingRTCSessionEvent | OutgoingRTCSessionEvent) => {
-        console.log("newRTCSession", data);
-
         const session = data.session;
         let currentEvent: String;
 
