@@ -125,12 +125,12 @@ const App = {
       console.log("初始化");
       try {
         const configuration: InitConfig = {
-          host: "172.17.36.25",
+          host: "172.17.132.95",
           port: 5060,
-          fsHost: "wss://crm-callcenter.test.bestpay.net/fws",
-          viaTransport:'ws',
-          // fsHost: "ws://172.17.36.25",
-          // fsPort: "5066",
+          // fsHost: "wss://crm-callcenter.test.bestpay.net/fws",
+          // viaTransport:'ws',
+          fsHost: "ws://172.17.132.95",
+          fsPort: "5066",
           extNo: "1005",
           extPwd: "1005",
           stun: { type: StunType.STUN, host: "stun.l.google.com:19302" },

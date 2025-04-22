@@ -69,6 +69,7 @@ export interface StateListenerMessage {
   direction?: CallDirection; //呼叫方向
   otherLegNumber?: String;
   callId?: String;
+  isTransfer?: any; //转接状态
 
   latencyTime?: number | undefined; //网络延迟(ms)
   upLossRate?: number | undefined; //上行-丢包率

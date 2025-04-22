@@ -177,6 +177,7 @@ export default class BestCall {
             // @ts-ignore
             // callId: data.request.call_id,
             callId: data.session.id,
+            isTransfer: data.request.getHeader("X-Is-From-Transfer"),
           });
         });
         // 来电接通
