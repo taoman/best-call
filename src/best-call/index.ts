@@ -28,6 +28,8 @@ import {
   State,
   CallExtraParam,
 } from "./index.d";
+import { version } from "../../package.json";
+console.log("当前版本:", version);
 
 export default class BestCall {
   //媒体控制
