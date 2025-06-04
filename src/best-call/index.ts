@@ -89,7 +89,7 @@ export default class BestCall {
       // uri: `sip:${config.extNo}@${config.host}:${config.port}`,
       uri: uri.toString(),
       password: config.extPwd,
-      register_expires: 15,
+      register_expires: 300,
       session_timers: false,
       user_agent: "JsSIP 3.10.1",
       contact_uri: "",
