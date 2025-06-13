@@ -1,7 +1,5 @@
 import * as jssip from "jssip";
-import {
-  RTCSession,
-} from "jssip/lib/RTCSession";
+import { RTCSession } from "jssip/lib/RTCSession";
 // 状态枚举
 export enum State {
   MIC_ERROR = "MIC_ERROR", //麦克风检测异常
@@ -69,6 +67,10 @@ export interface StateListenerMessage {
   direction?: CallDirection; //呼叫方向
   otherLegNumber?: String;
   callId?: String;
+  calleeNumber?: String; //被叫号码
+  callerNumber?: String; //主叫号码
+  callerUuid?: String; //主叫uuid
+  queue?: String; //技能组id
   isTransfer?: any; //转接状态
 
   latencyTime?: number | undefined; //网络延迟(ms)

@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 export default defineConfig({
   server:{
-    port: 3003
+    port: 4004
   },
   plugins: [
     dts({

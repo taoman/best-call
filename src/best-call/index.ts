@@ -93,6 +93,8 @@ export default class BestCall {
       session_timers: false,
       user_agent: "JsSIP 3.10.1",
       contact_uri: "",
+      CONNECTION_RECOVERY_MAX_INTERVAL: 30,
+      CONNECTION_RECOVERY_MIN_INTERVAL: 2,
     };
     uri.setParam("transport", "ws");
     configuration.contact_uri = uri.toString();
@@ -106,7 +108,7 @@ export default class BestCall {
     this.ua.on("disconnected", (e) => {
       this.ua.stop();
       if (e.error) {
-        this.onChangeState(State.ERROR, {
+        this.onChangeState(State.DISCONNECTED, {
           msg: "websocket连接失败,请检查地址或网络",
         });
       }
@@ -133,6 +135,8 @@ export default class BestCall {
     this.ua.on(
       "newRTCSession",
       (data: IncomingRTCSessionEvent | OutgoingRTCSessionEvent) => {
+        console.log("🚀 ~ BestCall ~ constructor ~ newRTCSession:", data);
+
         const session = data.session;
         let currentEvent: String;
 
@@ -179,6 +183,10 @@ export default class BestCall {
             // @ts-ignore
             // callId: data.request.call_id,
             callId: data.session.id,
+            calleeNumber: data.request.getHeader("Callee-Number"),
+            callerNumber: data.request.getHeader("Caller-Number"),
+            callerUuid: data.request.getHeader("Caller-Uuid"),
+            queue: data.request.getHeader("Cc-Queue"),
             isTransfer: data.request.getHeader("X-Is-From-Transfer"),
           });
         });
@@ -188,6 +196,7 @@ export default class BestCall {
         });
         // 来电挂断
         session.on("ended", (evt: EndEvent) => {
+          
           const evtData: CallEndEvent = {
             answered: true,
             cause: evt.cause,

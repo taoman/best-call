@@ -74,7 +74,7 @@ const App = {
           console.log("注册失败", data);
           break;
         case "INCOMING_CALL":
-          // console.log("呼入振铃", data);
+          console.log("呼入振铃", data);
           const incoming = new Date();
           const incomingTime = `${incoming.getHours()}:${incoming.getMinutes()}:${incoming.getSeconds()}`;
           console.log("振铃时间:", incomingTime);
@@ -140,8 +140,8 @@ const App = {
           // viaTransport:'ws',
           fsHost: "ws://172.17.132.95",
           fsPort: "5066",
-          extNo: "1001",
-          extPwd: "1001",
+          extNo: "1033",
+          extPwd: "1033",
           stun: { type: StunType.STUN, host: "stun.l.google.com:19302" },
           checkMic: true,
           stateEventListener,
