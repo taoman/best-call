@@ -181,8 +181,7 @@ export default class BestCall {
             direction: this.direction,
             otherLegNumber: data.request.from.uri.user,
             // @ts-ignore
-            // callId: data.request.call_id,
-            callId: data.session.id,
+            callId: data.request.call_id,
             calleeNumber: data.request.getHeader("Callee-Number"),
             callerNumber: data.request.getHeader("Caller-Number"),
             callerUuid: data.request.getHeader("Caller-Uuid"),
