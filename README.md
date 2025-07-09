@@ -18,10 +18,12 @@ npm install best-call
 | port               | number        | sip 服务器端口                                                | 必填项                 |
 | fsHost             | string        | freeswitch 服务器地址                                         | 必填项                 |
 | fsPort             | string/number | freeswitch 服务器端口                                         | 非必填项               |
+| registerExpires    | number        | 注册过期时间，默认 300 秒                                     | 非必填项               |
 | viaTransport       | string        | Via 头中显示的协议标识符(ws/wss/tcp/udp/tls),根据具体业务配置 | 非必填项               |
 | extNo              | string        | 分机账号                                                      | 必填项                 |
 | extPwd             | string        | 分机密码                                                      | 必填项                 |
 | checkMic           | boolean       | 麦克风检测                                                    | 必填项                 |
+| debug              | boolean       | 日志开启                                                      | 非必填项               |
 | stun               | Object        | stun 服务器配置                                               | 非必填项               |
 | stateEventListener | Function      | 状态回调函数方法 参照文档下方 stateEventListener 详细说明     | 必填项，需注入状态回调 |
 

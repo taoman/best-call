@@ -140,10 +140,12 @@ const App = {
           // viaTransport:'ws',
           fsHost: "ws://172.17.132.95",
           fsPort: "5066",
+          registerExpires: 100,
           extNo: "1006",
           extPwd: "1006",
           stun: { type: StunType.STUN, host: "stun.l.google.com:19302" },
           checkMic: true,
+          debug: true,
           stateEventListener,
         };
         sipClient.value = markRaw(new BestCall(configuration));

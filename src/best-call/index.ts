@@ -64,7 +64,7 @@ export default class BestCall {
   private currentStatReport!: NetworkLatencyStat;
 
   private stunConfig: StunConfig | undefined;
-
+  private wsConnected: boolean = false;
   //回调函数
   private stateEventListener: Function | undefined;
   constructor(config: InitConfig) {
@@ -89,23 +89,30 @@ export default class BestCall {
       // uri: `sip:${config.extNo}@${config.host}:${config.port}`,
       uri: uri.toString(),
       password: config.extPwd,
-      register_expires: 300,
+      register_expires: config.registerExpires || 300, // 注册过期时间，默认300秒
       session_timers: false,
       user_agent: "JsSIP 3.10.1",
       contact_uri: "",
-      CONNECTION_RECOVERY_MAX_INTERVAL: 30,
-      CONNECTION_RECOVERY_MIN_INTERVAL: 2,
+      connection_recovery_max_interval: 2,
+      connection_recovery_min_interval: 30,
+      heartbeat_interval: 10,
     };
     uri.setParam("transport", "ws");
     configuration.contact_uri = uri.toString();
+    if (config.debug) {
+      jssip.debug.enable("JsSIP:*");
+    } else {
+      jssip.debug.disable();
+    }
     this.ua = new jssip.UA(configuration);
-
     // websocket连接成功
     this.ua.on("connected", (_e) => {
+      this.wsConnected = true;
       this.onChangeState(State.CONNECTED, null);
     });
     // websocket连接失败
     this.ua.on("disconnected", (e) => {
+      this.wsConnected = false;
       this.ua.stop();
       if (e.error) {
         this.onChangeState(State.DISCONNECTED, {
@@ -130,7 +137,6 @@ export default class BestCall {
     this.ua.on("registrationExpiring", () => {
       this.ua.register();
     });
-
     // 电话事件监听
     this.ua.on(
       "newRTCSession",
@@ -195,7 +201,6 @@ export default class BestCall {
         });
         // 来电挂断
         session.on("ended", (evt: EndEvent) => {
-          
           const evtData: CallEndEvent = {
             answered: true,
             cause: evt.cause,
@@ -487,6 +492,13 @@ export default class BestCall {
   }
   // 应答事件
   public answer() {
+    console.log("fsSocket状态😊", this.wsConnected);
+    console.log("currentSession:", this.currentSession);
+    if (this.currentSession) {
+      console.log("currentSession status:", this.currentSession.status);
+      console.log("isInProgress:", this.currentSession.isInProgress());
+      console.log("isEnded:", this.currentSession.isEnded());
+    }
     if (this.currentSession && this.currentSession.isInProgress()) {
       this.currentSession.answer({
         mediaConstraints: this.constraints,
@@ -497,6 +509,7 @@ export default class BestCall {
         msg: "非法操作，通话尚未建立或状态不正确，请勿操作",
       });
     }
+    console.log("currentSession:", this.currentSession?.status);
   }
   // 挂断
   public hangup() {

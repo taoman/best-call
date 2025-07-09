@@ -31,14 +31,28 @@ export interface InitConfig {
   port: number; // sip端口
   fsHost: string; // freeswitch地址
   fsPort?: string | number; // freeswitch端口
+  registerExpires?: number; // 注册过期时间，默认300秒
   viaTransport?: string; // 表示在传出请求的 Via 标头字段中使用的 Via 传输的字符串
   extNo: string; //分机号
   extPwd: string; // 分机密码
   stun?: StunConfig; // stun服务器配置
   checkMic: boolean; // 是否检测麦克风
+  debug?: boolean; // 是否开启调试模式
   stateEventListener: Function; // 回调函数
 }
 
+const SessionStatus = {
+  STATUS_NULL: 0, // 初始状态
+  STATUS_INVITE_SENT: 1, //已发送INVITE
+  STATUS_1XX_RECEIVED: 2, //收到1xx响应
+  STATUS_INVITE_RECEIVED: 3, //收到INVITE
+  STATUS_WAITING_FOR_ANSWER: 4, //等待应答
+  STATUS_ANSWERED: 5, //已应答
+  STATUS_WAITING_FOR_ACK: 6, //等待ACK
+  STATUS_CANCELED: 7, //已取消
+  STATUS_TERMINATED: 8, //已终止
+  STATUS_CONFIRMED: 9, //已确认/通话中
+};
 // stun服务器配置
 type StunType = "turn" | "stun";
 export type CallDirection = "outbound" | "inbound";
