@@ -64,7 +64,6 @@ export default class BestCall {
   private currentStatReport!: NetworkLatencyStat;
 
   private stunConfig: StunConfig | undefined;
-  private wsConnected: boolean = false;
   //回调函数
   private stateEventListener: Function | undefined;
   constructor(config: InitConfig) {
@@ -107,12 +106,10 @@ export default class BestCall {
     this.ua = new jssip.UA(configuration);
     // websocket连接成功
     this.ua.on("connected", (_e) => {
-      this.wsConnected = true;
       this.onChangeState(State.CONNECTED, null);
     });
     // websocket连接失败
     this.ua.on("disconnected", (e) => {
-      this.wsConnected = false;
       this.ua.stop();
       if (e.error) {
         this.onChangeState(State.DISCONNECTED, {
@@ -492,12 +489,12 @@ export default class BestCall {
   }
   // 应答事件
   public answer() {
-    console.log("fsSocket状态😊", this.wsConnected);
-    console.log("currentSession:", this.currentSession);
+    const time = new Date();
+    console.log("currentSession:", this.currentSession, time);
     if (this.currentSession) {
-      console.log("currentSession status:", this.currentSession.status);
-      console.log("isInProgress:", this.currentSession.isInProgress());
-      console.log("isEnded:", this.currentSession.isEnded());
+      console.log("currentSession status:", this.currentSession.status, time);
+      console.log("isInProgress:", this.currentSession.isInProgress(), time);
+      console.log("isEnded:", this.currentSession.isEnded(), time);
     }
     if (this.currentSession && this.currentSession.isInProgress()) {
       this.currentSession.answer({
