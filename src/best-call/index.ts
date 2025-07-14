@@ -83,6 +83,10 @@ export default class BestCall {
     this.socket = new jssip.WebSocketInterface(fsUrl);
     if (config.viaTransport) this.socket.via_transport = config.viaTransport;
     const uri = new URI("sip", config.extNo, config.host, config.port);
+    // @ts-ignore
+    jssip.C.SESSION_EXPIRES = 120;
+    // @ts-ignore
+    jssip.C.MIN_SESSION_EXPIRES = 120;
     const configuration = {
       sockets: [this.socket],
       // uri: `sip:${config.extNo}@${config.host}:${config.port}`,
@@ -492,7 +496,7 @@ export default class BestCall {
     const time = new Date();
     console.log("currentSession:", this.currentSession, time);
     if (this.currentSession) {
-      console.log("currentSession status:", this.currentSession.status, time);
+      console.log("currentSession statusStart:", this.currentSession.status, time);
       console.log("isInProgress:", this.currentSession.isInProgress(), time);
       console.log("isEnded:", this.currentSession.isEnded(), time);
     }
@@ -501,12 +505,12 @@ export default class BestCall {
         mediaConstraints: this.constraints,
         pcConfig: this.getCallOptionPcConfig(),
       });
+      console.log("currentSession statusEnd:", this.currentSession.status, time);
     } else {
       this.onChangeState(State.ERROR, {
         msg: "非法操作，通话尚未建立或状态不正确，请勿操作",
       });
     }
-    console.log("currentSession:", this.currentSession?.status);
   }
   // 挂断
   public hangup() {
